@@ -1,6 +1,6 @@
 // src/components/analytics/ComparisonChart.jsx
-import { useState } from "react";
-import { runBenchmark } from "../../api/rescueway";
+import { useState, useEffect  } from "react";
+import { runBenchmark, getBenchmarkHistory} from "../../api/rescueway";
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip,
   ResponsiveContainer, Cell, LabelList
@@ -120,11 +120,40 @@ function MetricBarChart({ results, field }) {
 }
 
 export default function ComparisonChart() {
+  const isPublicDemo = import.meta.env.VITE_PUBLIC_DEMO_MODE === "true";
   const [results, setResults] = useState(null);
   const [loading, setLoading] = useState(false);
   const [episodes, setEpisodes] = useState(50);
   const [pattern, setPattern] = useState("medium");
   const [runId, setRunId] = useState(0);
+    // Load the latest saved benchmark when the page opens
+  useEffect(() => {
+    let cancelled = false;
+
+    const loadHistory = async () => {
+      try {
+        const history = await getBenchmarkHistory(1);
+        const records = Array.isArray(history)
+          ? history
+          : history?.value ?? [];
+
+        const latest = records[0];
+
+        if (!cancelled && latest?.results?.controllers) {
+          setResults(latest.results);
+          setRunId(id => id + 1);
+        }
+      } catch (err) {
+        console.error("Failed to load benchmark history:", err);
+      }
+    };
+
+    loadHistory();
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   const runTest = async () => {
     setLoading(true);
@@ -146,6 +175,7 @@ export default function ComparisonChart() {
       <div className="flex items-center justify-between">
         <h2 className="text-base font-medium text-white">Controller Benchmark</h2>
 
+       {!isPublicDemo ? (
         <div className="flex items-center gap-2">
           <select
             value={pattern}
@@ -171,16 +201,23 @@ export default function ComparisonChart() {
             onClick={runTest}
             disabled={loading}
             className="px-4 py-1.5 text-sm bg-blue-600 text-white rounded-lg
-                       hover:bg-blue-700 disabled:opacity-50"
+                      hover:bg-blue-700 disabled:opacity-50"
           >
             {loading ? "Running..." : "Run Benchmark"}
           </button>
         </div>
+      ) : (
+        <span className="text-xs text-emerald-400">
+          Saved benchmark results · Read-only
+        </span>
+      )}
       </div>
 
       {!results && !loading && (
         <p className="text-sm text-[#6b7080] py-8 text-center">
-          Click "Run Benchmark" to compare all controllers
+            {isPublicDemo
+              ? "No saved benchmark results are available yet."
+              : 'Click "Run Benchmark" to compare all controllers'}
         </p>
       )}
 

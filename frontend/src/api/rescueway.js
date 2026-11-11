@@ -35,6 +35,9 @@ export const getSummary = () =>
 export const runBenchmark = (episodes = 50, pattern = "medium") =>
   API.post(`/compare/run?episodes=${episodes}&pattern=${pattern}`).then(r => r.data);
 
+export const getBenchmarkHistory = (limit = 10) =>
+  API.get(`/compare/history?limit=${limit}`).then(r => r.data);
+
 export const runStressTest = (episodes = 30) =>
   API.post(`/eval/stress-test?episodes=${episodes}`).then(r => r.data);
 

@@ -140,13 +140,26 @@ export default function ControlBar({ lastEvent, connected }) {
           {mode==="emergency"&&(
             <div className="bg-red-900/30 rounded-lg p-2 border border-red-800/50 space-y-1.5">
               {/* Active ambulance */}
-              <div className="flex items-center justify-between">
+              <div className="flex items-center justify-between gap-2">
                 <p className="text-[10px] text-red-400 font-medium">
                   🚑 Active: Zone {lastEvent?.emergency_queue?.active?.zone || lastEvent?.emergency_zone}
                 </p>
-                <span className="text-[9px] px-1.5 py-0.5 rounded bg-red-800 text-red-200">
-                  {lastEvent?.emergency_queue?.active?.id || "AMB"}
-                </span>
+
+                <div className="flex items-center gap-1.5">
+                  <span className={`text-[8px] px-1.5 py-0.5 rounded font-bold ${
+                    lastEvent?.emergency_queue?.active?.source === "DEMO"
+                      ? "bg-amber-900/60 text-amber-300"
+                      : "bg-emerald-900/60 text-emerald-300"
+                  }`}>
+                    {lastEvent?.emergency_queue?.active?.source === "DEMO"
+                      ? "SIMULATED"
+                      : "LIVE GPS"}
+                  </span>
+
+                  <span className="text-[9px] px-1.5 py-0.5 rounded bg-red-800 text-red-200">
+                    {lastEvent?.emergency_queue?.active?.id || "AMB"}
+                  </span>
+                </div>
               </div>
 
               {/* ETA / Distance / Green */}

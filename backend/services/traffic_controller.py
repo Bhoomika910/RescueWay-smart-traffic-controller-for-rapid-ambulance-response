@@ -27,6 +27,7 @@ Signal Change Flow:
 Both frontend and Arduino always show the SAME signal.
 """
 import asyncio
+import random
 import time
 
 from config import (
@@ -34,6 +35,9 @@ from config import (
     DEFAULT_EMERGENCY_DURATION,
     DEFAULT_GREEN_DURATION,
     DEFAULT_YELLOW_DURATION,
+    DEMO_MODE,
+    DEMO_INTERVAL_MIN,
+    DEMO_INTERVAL_MAX,
 )
 from data import db
 from logging_system import app_logger
@@ -56,6 +60,8 @@ class TrafficController:
         self.step_count = 0
         self.running = False
         self.paused = False
+        # Public demo emergency scheduler
+        self._next_demo_emergency_at = None
 
         # Traffic simulator
         self.simulator = TrafficSimulator()
@@ -726,11 +732,14 @@ class TrafficController:
     # EMERGENCY TRIGGER
     # ══════════════════════════════════════════════════════
 
-    async def trigger_emergency(self, zone, traffic):
+    async def trigger_emergency(self, zone, traffic, source="GPS"):
         """
-        Called when ambulance GPS reports a location.
+        Called when ambulance GPS or the demo scheduler reports a location.
         """
-        decision = self.emergency_manager.add_emergency(zone, traffic)
+        source = str(source).upper()
+        if source not in ("GPS", "DEMO"):
+            raise ValueError("Source must be GPS or DEMO")
+        decision = self.emergency_manager.add_emergency(zone, traffic,source=source)
         decision_type = decision["decision"]
         request = decision["request"]
         # Captured once, up front, and threaded through every log call for
@@ -741,13 +750,13 @@ class TrafficController:
         amb_id = request.id if request else None
 
         app_logger.log_emergency_start(zone, traffic, ambulance_id=amb_id)
-        app_logger.log_system_event(decision["message"], {"ambulance_id": amb_id})
+        app_logger.log_system_event(decision["message"], {"ambulance_id": amb_id,"source": source},)
 
         if decision_type == "merge":
             self.emergency_green_adaptive = self.emergency_manager.get_active_green_duration()
             app_logger.log_system_event(
                 f"Green extended to {self.emergency_green_adaptive}s for Zone {zone}",
-                {"ambulance_id": amb_id},
+                {"ambulance_id": amb_id,"source": source},
             )
             return self.last_action, self.last_reward, self.current_zone
 
@@ -814,7 +823,7 @@ class TrafficController:
             # Queued
             app_logger.log_system_event(
                 f"Ambulance queued: Zone {zone} (position {decision.get('queue_position', '?')})",
-                {"ambulance_id": amb_id},
+                {"ambulance_id": amb_id,"source": source},
             )
             return self.last_action, self.last_reward, self.current_zone
 
@@ -945,11 +954,47 @@ class TrafficController:
         )
         self.current_zone = 1
 
+        # Schedule the first simulated emergency after a random 1–3 minutes
+        if DEMO_MODE:
+            self._next_demo_emergency_at = (
+                time.monotonic() + random.randint(
+                    DEMO_INTERVAL_MIN, DEMO_INTERVAL_MAX
+                )
+            )
+
+
         while self.running:
             try:
                 if self.paused:
                     await asyncio.sleep(0.5)
                     continue
+
+                    # Automatically generate simulated ambulance emergencies in demo mode
+                if (
+                    DEMO_MODE
+                    and self._next_demo_emergency_at is not None
+                    and time.monotonic() >= self._next_demo_emergency_at
+                ):
+                    # Schedule the next event before triggering the current one
+                    self._next_demo_emergency_at = (
+                        time.monotonic() + random.randint(
+                            DEMO_INTERVAL_MIN, DEMO_INTERVAL_MAX
+                        )
+                    )
+
+                    demo_zone = random.randint(1, 4)
+                    demo_traffic = getattr(self.simulator, "traffic_pattern", "medium")
+
+                    app_logger.log_system_event(
+                        f"DEMO: Simulated ambulance generated for Zone {demo_zone}",
+                        {"source": "DEMO", "zone": demo_zone},
+                    )
+
+                    await self.trigger_emergency(
+                        zone=demo_zone,
+                        traffic=demo_traffic,
+                        source="DEMO",
+                    )
                 if self.mode == "normal":
                     await self._run_rl_cycle()
                 elif self.mode == "emergency":

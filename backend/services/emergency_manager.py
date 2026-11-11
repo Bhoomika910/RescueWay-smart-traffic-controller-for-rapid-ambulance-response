@@ -32,6 +32,7 @@ class EmergencyRequest:
     green_duration: int
     priority_level: int
     timestamp: float
+    source: str = "GPS"
     status: str = "waiting"  # waiting, active, completed, preempted
     response_start: float = 0.0
     response_end: float = 0.0
@@ -55,6 +56,7 @@ class EmergencyRequest:
             "eta_seconds": self.eta_seconds,
             "green_duration": self.green_duration,
             "priority_level": self.priority_level,
+            "source": self.source,
             "status": self.status,
             "age_seconds": self.get_age(),
             "response_time": self.get_response_time(),
@@ -95,7 +97,7 @@ class EmergencyManager:
         self.total_preempted = 0
         self.total_merged = 0
 
-    def add_emergency(self, zone: int, traffic: str) -> dict:
+    def add_emergency(self, zone: int, traffic: str, source: str = "GPS") -> dict:
         """
         Add a new ambulance emergency request.
 
@@ -105,6 +107,9 @@ class EmergencyManager:
         - "queue": current ambulance is closer, queue new one
         - "merge": same zone as active, extend green duration
         """
+        source = str(source).upper()
+        if source not in ("GPS", "DEMO"):
+            raise ValueError("Source must be GPS or DEMO")
         if zone not in ZONE_CONFIG:
             raise ValueError(f"Unknown zone {zone!r} — must be one of {sorted(ZONE_CONFIG)}")
         self.gps_model.update_zone(
@@ -121,6 +126,7 @@ class EmergencyManager:
             green_duration=config["emergency_green"],
             priority_level=config["priority_level"],
             timestamp=time.time(),
+            source=source,
         )
 
         self._next_id += 1
@@ -267,6 +273,7 @@ class EmergencyManager:
                 "status": str(self.active.status),
                 "age_seconds": float(self.active.get_age()),
                 "response_time": float(self.active.get_response_time()),
+                "source": str(self.active.source),
             }
 
         queue_list = []
@@ -279,6 +286,7 @@ class EmergencyManager:
                     "eta_seconds": float(r.eta_seconds),
                     "green_duration": int(r.green_duration),
                     "status": str(r.status),
+                    "source": str(r.source),
                 }
             )
 
@@ -290,6 +298,7 @@ class EmergencyManager:
                     "zone": int(r.zone),
                     "status": str(r.status),
                     "response_time": float(r.get_response_time()),
+                    "source": str(r.source),
                 }
             )
 

@@ -19,6 +19,7 @@ const CATEGORY_COLORS = {
 };
 
 export default function LogViewer() {
+  const isPublicDemo = import.meta.env.VITE_PUBLIC_DEMO_MODE === "true";
   const [logs, setLogs]         = useState([]);
   const [summary, setSummary]   = useState(null);
   const [filter, setFilter]     = useState({ level: "", category: "" });
@@ -75,6 +76,7 @@ export default function LogViewer() {
           >
             {autoRefresh ? "Auto-refresh ON" : "Auto-refresh OFF"}
           </button>
+          {!isPublicDemo && (
           <button
             onClick={handleExport}
             disabled={exporting}
@@ -82,6 +84,7 @@ export default function LogViewer() {
           >
             {exporting ? "Exporting..." : "Export logs"}
           </button>
+        )}
         </div>
       </div>
 

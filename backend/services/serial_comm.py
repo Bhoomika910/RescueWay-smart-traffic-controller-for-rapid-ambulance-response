@@ -5,7 +5,7 @@ import time
 import serial
 import serial.tools.list_ports
 
-from config import ARDUINO_BAUD, ARDUINO_PORT
+from config import ARDUINO_BAUD, ARDUINO_PORT, HARDWARE_ENABLED
 
 
 class SerialBridge:
@@ -27,6 +27,12 @@ class SerialBridge:
         self.last_command_time = None
 
     def connect(self):
+        if not HARDWARE_ENABLED:
+            print("Hardware disabled by configuration. Running in simulation mode.")
+            self.connected = False
+            self.simulation_mode = True
+            return "SIMULATION_MODE"
+
         print(f"Connecting to Arduino on {self.port}...")
         try:
             self.conn = serial.Serial(self.port, self.baud, timeout=2)

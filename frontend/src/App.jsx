@@ -22,6 +22,7 @@ const ComparisonChart = lazy(() => import("./components/analytics/ComparisonChar
 
 export default function App() {
   const [page, setPage]     = useState("main");
+  const isPublicDemo = import.meta.env.VITE_PUBLIC_DEMO_MODE === "true";
 
   /** @type {{ lastEvent: LiveEvent | null, connected: boolean }} */
   const { lastEvent, connected } = useWebSocket(WS_URL);
@@ -73,7 +74,9 @@ export default function App() {
               </div>
 
               {/* Controls */}
-              <ControlBar lastEvent={lastEvent} connected={connected} />
+              {!isPublicDemo && (
+                <ControlBar lastEvent={lastEvent} connected={connected} />
+              )}
             </div>
           </ErrorBoundary>
         )}
