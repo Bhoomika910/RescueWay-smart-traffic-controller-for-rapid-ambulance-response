@@ -1,0 +1,68 @@
+# RescueWay — local/production-shaped deployment of the live system
+# (API server + dashboard). Does NOT include SUMO-based training/evaluation
+# (backend/sumo/*.py) — those are research scripts run on demand against a
+# separate SUMO install, not part of the always-on service; see
+# backend/sumo/README.md and ARCHITECTURE.md's reproduction guide instead.
+#
+# Usage:
+#   cp backend/.env.example backend/.env      # then edit as needed
+#   docker compose up --build
+#   open http://localhost:5173
+#
+# Hardware note: the Arduino serial connection (RESCUEWAY_ARDUINO_PORT)
+# generally isn't reachable from inside a container without an explicit
+# device mapping (see the commented `devices:` block below) — the backend
+# falls back to simulation mode automatically if it can't open the port,
+# so this compose file works standalone for evaluating the software without
+# physical hardware attached.
+
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    image: rescueway-backend:local
+    ports:
+      - "8000:8000"
+    env_file:
+      - ./backend/.env
+    environment:
+      RESCUEWAY_HOST: "0.0.0.0"
+      RESCUEWAY_PORT: "8000"
+      RESCUEWAY_FRONTEND: "http://localhost:5173"
+    volumes:
+      # Persist trained checkpoints / DB / logs across container recreation
+      # without baking them into the image (see backend/.gitignore's
+      # checkpoint-handling note for why these aren't tracked in git).
+      - rescueway-rl:/app/rl
+      - rescueway-data:/app/data
+      - rescueway-logs:/app/logs
+    # Uncomment to pass through a real Arduino on Linux/macOS hosts:
+    # devices:
+    #   - "/dev/ttyUSB0:/dev/ttyUSB0"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health', timeout=4)"]
+      interval: 30s
+      timeout: 5s
+      start_period: 15s
+      retries: 3
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        VITE_API_BASE_URL: "http://localhost:8000"
+    image: rescueway-frontend:local
+    ports:
+      - "5173:80"
+    depends_on:
+      backend:
+        condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  rescueway-rl:
+  rescueway-data:
+  rescueway-logs:

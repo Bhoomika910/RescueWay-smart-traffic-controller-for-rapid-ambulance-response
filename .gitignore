@@ -1,0 +1,77 @@
+# === Python (backend) ===
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+htmlcov/
+.coverage
+.coverage.*
+coverage.xml
+*.egg-info/
+.venv/
+venv/
+env/
+
+# === Trained model artifacts ===
+# Checkpoints are large binaries that don't diff usefully in git; they are
+# regenerated deterministically from a seed via train_offline.py /
+# sumo/train_multi_seed.py / sumo/train_dqn_sumo.py, and every training run
+# already produces a timestamped, git-tracked JSON provenance record under
+# backend/results/ and backend/sumo/training_logs/ recording exactly which
+# seed/config produced it (see backend/ARCHITECTURE.md Part 8.11/8.15 for
+# the reproduction procedure). If you need to ship a specific checkpoint,
+# use `git add -f` or Git LFS rather than removing this rule wholesale.
+backend/rl/*.pkl
+backend/rl/*.pt
+backend/sumo/checkpoints/*.pt
+!backend/sumo/checkpoints/.gitkeep
+
+# === Backend runtime data ===
+backend/logs/*.log
+backend/logs/*.jsonl
+backend/data/*.db
+backend/data/*.sqlite3
+!backend/logs/.gitkeep
+!backend/data/.gitkeep
+
+# Generated report images (regenerate via generate_report_charts.py /
+# visualize_qtable.py rather than tracking as binary diffs)
+backend/*.png
+
+# === Environment / secrets ===
+.env
+.env.*
+!.env.example
+
+# === Node / frontend ===
+frontend/node_modules/
+frontend/dist/
+frontend/coverage/
+
+# === OS / editor ===
+.DS_Store
+Thumbs.db
+*.swp
+.vscode/
+.idea/
+
+# Additional generated files and model checkpoints
+*.pt
+*.pth
+*.ckpt
+*.log.*
+backend/research/artifacts/*.npy
+
+# All runtime database files
+*.db
+*.sqlite
+*.sqlite3
+
+# Research material - excluded from GitHub
+backend/research/
+backend/results/
+backend/sumo/results/
+backend/sumo/training_logs/
+backend/sumo/experiments/

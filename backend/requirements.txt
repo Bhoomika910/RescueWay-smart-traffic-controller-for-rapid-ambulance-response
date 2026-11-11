@@ -1,0 +1,49 @@
+# RescueWay backend dependencies.
+#
+# Pinned to the versions actually installed and exercised in this project's
+# working environment (verified via `pip show`/`<module>.__version__` on
+# 2026-07-21), not aspirational/stale values — a prior version of this file
+# pinned fastapi==0.111.0/uvicorn==0.30.0/numpy==1.26.4/pydantic==2.7.0/
+# matplotlib==3.8.0 while the environment that actually produced every
+# reported result was running fastapi 0.135.2/uvicorn 0.42.0/numpy 2.2.4/
+# pydantic 2.12.2/matplotlib 3.10.6 — a real, previously-uncaught
+# reproducibility gap (`pip install -r requirements.txt` would not have
+# reproduced the environment results were generated in).
+#
+# torch and scipy were previously missing from this file entirely despite
+# being hard dependencies of rl/dqn_agent.py, rl/dqn_network.py,
+# sumo/train_dqn_sumo.py, sumo/train_multi_seed.py,
+# evaluation/statistical_analysis.py, and evaluation/multi_ambulance_significance.py
+# — anyone reproducing the DQN training or the statistical-significance
+# results from this file alone would have hit an immediate
+# ModuleNotFoundError.
+
+fastapi==0.135.2
+uvicorn==0.42.0
+pyserial==3.5
+numpy==2.2.4
+pydantic==2.12.2
+matplotlib==3.10.6
+torch==2.10.0
+scipy==1.16.2
+# Post hoc power analysis (evaluation/statistical_analysis.py's
+# TTestPower) — added alongside the normality-gating/Benjamini-Hochberg
+# statistical-methodology fixes; was previously used nowhere in the
+# codebase, so no significance test anywhere reported achieved power.
+statsmodels==0.14.5
+
+# SUMO integration (backend/sumo/*.py). These wrap the SUMO simulator
+# itself, which is a separate, non-pip system install — SUMO_HOME must
+# point at that installation (see backend/sumo/README.md) for `import
+# traci` to actually work even with these packages present.
+traci==1.27.1
+sumolib==1.27.1
+
+# Testing (backend/routers, services, and the WebSocket endpoint — see
+# backend/tests/). Previously absent entirely: no test framework was
+# installed, so the three legacy top-level test_*.py scripts could only be
+# run as plain Python scripts with manual asserts, and nothing exercised
+# the router/service/database layer at all.
+pytest==9.1.1
+httpx==0.28.1
+pytest-asyncio==1.4.0

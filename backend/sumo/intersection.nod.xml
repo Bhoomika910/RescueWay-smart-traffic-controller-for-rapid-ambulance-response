@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- RescueWay SUMO Network - Node Definitions -->
+<!-- Single 4-way intersection with 4 approach roads -->
+<nodes>
+    <!-- Central intersection -->
+    <node id="center" x="0" y="0" type="traffic_light"/>
+    
+    <!-- Zone endpoints (500m from intersection in each direction) -->
+    <!-- Zone 1: North -->
+    <node id="north" x="0" y="500" type="priority"/>
+    <!-- Zone 2: East -->
+    <node id="east" x="500" y="0" type="priority"/>
+    <!-- Zone 3: South -->
+    <node id="south" x="0" y="-500" type="priority"/>
+    <!-- Zone 4: West -->
+    <node id="west" x="-500" y="0" type="priority"/>
+</nodes>

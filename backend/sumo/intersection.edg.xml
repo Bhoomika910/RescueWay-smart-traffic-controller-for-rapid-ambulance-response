@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- RescueWay SUMO Network - Edge Definitions -->
+<!-- Each zone has one incoming and one outgoing lane -->
+<edges>
+    <!-- Zone 1 (North) approaches -->
+    <edge id="north_in" from="north" to="center" numLanes="1" speed="13.89"/>
+    <edge id="north_out" from="center" to="north" numLanes="1" speed="13.89"/>
+    
+    <!-- Zone 2 (East) approaches -->
+    <edge id="east_in" from="east" to="center" numLanes="1" speed="13.89"/>
+    <edge id="east_out" from="center" to="east" numLanes="1" speed="13.89"/>
+    
+    <!-- Zone 3 (South) approaches -->
+    <edge id="south_in" from="south" to="center" numLanes="1" speed="13.89"/>
+    <edge id="south_out" from="center" to="south" numLanes="1" speed="13.89"/>
+    
+    <!-- Zone 4 (West) approaches -->
+    <edge id="west_in" from="west" to="center" numLanes="1" speed="13.89"/>
+    <edge id="west_out" from="center" to="west" numLanes="1" speed="13.89"/>
+</edges>

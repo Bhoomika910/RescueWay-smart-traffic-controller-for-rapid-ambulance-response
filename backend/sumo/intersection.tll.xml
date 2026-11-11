@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- RescueWay SUMO Network - Traffic Light Logic -->
+<!-- Default program with 4 phases matching our 4 zones -->
+<!-- This is the default cycle that RL will override via TraCI -->
+<tlLogics>
+    <tlLogic id="center" type="static" programID="default" offset="0">
+        <!-- Phase 0: Zone 1 (North-South) Green -->
+        <phase duration="30" state="GGrrGGrr"/>
+        <!-- Phase 1: Yellow transition -->
+        <phase duration="3"  state="yyrryyrr"/>
+        <!-- Phase 2: Zone 2 (East-West) Green -->
+        <phase duration="30" state="rrGGrrGG"/>
+        <!-- Phase 3: Yellow transition -->
+        <phase duration="3"  state="rryyrryy"/>
+    </tlLogic>
+</tlLogics>

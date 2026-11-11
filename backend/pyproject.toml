@@ -1,0 +1,49 @@
+[tool.ruff]
+line-length = 100
+target-version = "py313"
+exclude = ["sumo/checkpoints", "results", "logs"]
+
+[tool.ruff.lint]
+# Deliberately narrow to start: correctness/bug-risk rules (F = pyflakes,
+# E = pycodestyle errors, I = import sorting) rather than the full
+# stylistic rule set. This project's own review flagged "no backend
+# linting" as the gap to close (design-review category 22 "Code quality")
+# — the priority is catching real bugs (unused imports, undefined names,
+# shadowed builtins) project-wide, not a wholesale style rewrite of ~15k
+# lines of already-working, heavily-commented code in one pass. Widen this
+# selection incrementally as the codebase is touched.
+select = ["E", "F", "I"]
+ignore = [
+    "E501",  # line length handled by black, not ruff, to avoid the two tools disagreeing
+]
+
+[tool.ruff.lint.per-file-ignores]
+# Notebook-style/legacy top-level scripts predating the routers/services
+# layering; not worth restructuring solely to satisfy import-order rules.
+"visualize_qtable.py" = ["E402"]
+"generate_report_charts.py" = ["E402"]
+
+[tool.black]
+line-length = 100
+target-version = ["py313"]
+extend-exclude = "sumo/checkpoints|results|logs"
+
+[tool.mypy]
+python_version = "3.13"
+# Same incremental-adoption rationale as the ruff rule selection above:
+# strict mode across the whole tree in one pass would produce hundreds of
+# findings in modules that were never written with type-checking in mind
+# (rl/*.py, evaluation/*.py) and drown the signal. Strict checking is
+# scoped to the modules where a type error is most costly — the shared
+# scoring/safety logic and the API layer — via the per-module overrides
+# below; everything else is checked loosely (report obvious errors, don't
+# require full annotation coverage yet).
+ignore_missing_imports = true
+warn_unused_ignores = true
+warn_redundant_casts = true
+check_untyped_defs = true
+
+[[tool.mypy.overrides]]
+module = ["rl.safety_shield", "rl.emergency_scoring", "models.schemas", "routers.auth"]
+disallow_untyped_defs = true
+disallow_incomplete_defs = true

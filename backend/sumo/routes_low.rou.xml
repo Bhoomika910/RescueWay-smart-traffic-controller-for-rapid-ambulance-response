@@ -1,0 +1,329 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<routes>
+    <vType id="car" accel="2.6" decel="4.5" sigma="0.5" length="5" minGap="2.5" maxSpeed="13.89" color="0.5,0.5,1.0" />
+    <vType id="ambulance" accel="3.0" decel="5.0" sigma="0.3" length="7" minGap="2.0" maxSpeed="16.67" color="1.0,1.0,1.0" vClass="emergency" guiShape="emergency" />
+    <route id="zone1_to_zone3" edges="north_in south_out" />
+    <route id="zone1_to_zone2" edges="north_in east_out" />
+    <route id="zone1_to_zone4" edges="north_in west_out" />
+    <route id="zone2_to_zone4" edges="east_in west_out" />
+    <route id="zone2_to_zone3" edges="east_in south_out" />
+    <route id="zone2_to_zone1" edges="east_in north_out" />
+    <route id="zone3_to_zone1" edges="south_in north_out" />
+    <route id="zone3_to_zone4" edges="south_in west_out" />
+    <route id="zone3_to_zone2" edges="south_in east_out" />
+    <route id="zone4_to_zone2" edges="west_in east_out" />
+    <route id="zone4_to_zone1" edges="west_in north_out" />
+    <route id="zone4_to_zone3" edges="west_in south_out" />
+    <vehicle id="car_0" type="car" depart="0" departLane="free" departSpeed="max">
+        <route edges="east_in south_out" />
+    </vehicle>
+    <vehicle id="car_1" type="car" depart="2" departLane="free" departSpeed="max">
+        <route edges="north_in south_out" />
+    </vehicle>
+    <vehicle id="car_2" type="car" depart="2" departLane="free" departSpeed="max">
+        <route edges="west_in east_out" />
+    </vehicle>
+    <vehicle id="car_3" type="car" depart="7" departLane="free" departSpeed="max">
+        <route edges="east_in south_out" />
+    </vehicle>
+    <vehicle id="car_4" type="car" depart="9" departLane="free" departSpeed="max">
+        <route edges="west_in east_out" />
+    </vehicle>
+    <vehicle id="car_5" type="car" depart="26" departLane="free" departSpeed="max">
+        <route edges="south_in east_out" />
+    </vehicle>
+    <vehicle id="car_6" type="car" depart="30" departLane="free" departSpeed="max">
+        <route edges="east_in south_out" />
+    </vehicle>
+    <vehicle id="car_7" type="car" depart="38" departLane="free" departSpeed="max">
+        <route edges="east_in north_out" />
+    </vehicle>
+    <vehicle id="car_8" type="car" depart="66" departLane="free" departSpeed="max">
+        <route edges="east_in north_out" />
+    </vehicle>
+    <vehicle id="car_9" type="car" depart="71" departLane="free" departSpeed="max">
+        <route edges="east_in west_out" />
+    </vehicle>
+    <vehicle id="car_10" type="car" depart="72" departLane="free" departSpeed="max">
+        <route edges="west_in east_out" />
+    </vehicle>
+    <vehicle id="car_11" type="car" depart="73" departLane="free" departSpeed="max">
+        <route edges="west_in north_out" />
+    </vehicle>
+    <vehicle id="car_12" type="car" depart="79" departLane="free" departSpeed="max">
+        <route edges="east_in north_out" />
+    </vehicle>
+    <vehicle id="car_13" type="car" depart="81" departLane="free" departSpeed="max">
+        <route edges="west_in north_out" />
+    </vehicle>
+    <vehicle id="car_14" type="car" depart="83" departLane="free" departSpeed="max">
+        <route edges="south_in north_out" />
+    </vehicle>
+    <vehicle id="car_15" type="car" depart="86" departLane="free" departSpeed="max">
+        <route edges="north_in east_out" />
+    </vehicle>
+    <vehicle id="car_16" type="car" depart="89" departLane="free" departSpeed="max">
+        <route edges="south_in east_out" />
+    </vehicle>
+    <vehicle id="car_17" type="car" depart="101" departLane="free" departSpeed="max">
+        <route edges="north_in east_out" />
+    </vehicle>
+    <vehicle id="car_18" type="car" depart="116" departLane="free" departSpeed="max">
+        <route edges="east_in north_out" />
+    </vehicle>
+    <vehicle id="car_19" type="car" depart="116" departLane="free" departSpeed="max">
+        <route edges="west_in north_out" />
+    </vehicle>
+    <vehicle id="car_20" type="car" depart="127" departLane="free" departSpeed="max">
+        <route edges="south_in north_out" />
+    </vehicle>
+    <vehicle id="car_21" type="car" depart="128" departLane="free" departSpeed="max">
+        <route edges="east_in west_out" />
+    </vehicle>
+    <vehicle id="car_22" type="car" depart="135" departLane="free" departSpeed="max">
+        <route edges="west_in south_out" />
+    </vehicle>
+    <vehicle id="car_23" type="car" depart="143" departLane="free" departSpeed="max">
+        <route edges="east_in south_out" />
+    </vehicle>
+    <vehicle id="car_24" type="car" depart="145" departLane="free" departSpeed="max">
+        <route edges="east_in west_out" />
+    </vehicle>
+    <vehicle id="car_25" type="car" depart="154" departLane="free" departSpeed="max">
+        <route edges="west_in south_out" />
+    </vehicle>
+    <vehicle id="car_26" type="car" depart="155" departLane="free" departSpeed="max">
+        <route edges="east_in west_out" />
+    </vehicle>
+    <vehicle id="car_27" type="car" depart="166" departLane="free" departSpeed="max">
+        <route edges="east_in south_out" />
+    </vehicle>
+    <vehicle id="car_28" type="car" depart="167" departLane="free" departSpeed="max">
+        <route edges="north_in east_out" />
+    </vehicle>
+    <vehicle id="car_29" type="car" depart="174" departLane="free" departSpeed="max">
+        <route edges="north_in east_out" />
+    </vehicle>
+    <vehicle id="car_30" type="car" depart="174" departLane="free" departSpeed="max">
+        <route edges="west_in east_out" />
+    </vehicle>
+    <vehicle id="car_31" type="car" depart="176" departLane="free" departSpeed="max">
+        <route edges="west_in east_out" />
+    </vehicle>
+    <vehicle id="car_32" type="car" depart="198" departLane="free" departSpeed="max">
+        <route edges="west_in south_out" />
+    </vehicle>
+    <vehicle id="car_33" type="car" depart="202" departLane="free" departSpeed="max">
+        <route edges="west_in east_out" />
+    </vehicle>
+    <vehicle id="car_34" type="car" depart="207" departLane="free" departSpeed="max">
+        <route edges="north_in south_out" />
+    </vehicle>
+    <vehicle id="car_35" type="car" depart="210" departLane="free" departSpeed="max">
+        <route edges="north_in east_out" />
+    </vehicle>
+    <vehicle id="car_36" type="car" depart="214" departLane="free" departSpeed="max">
+        <route edges="south_in west_out" />
+    </vehicle>
+    <vehicle id="car_37" type="car" depart="220" departLane="free" departSpeed="max">
+        <route edges="west_in south_out" />
+    </vehicle>
+    <vehicle id="car_38" type="car" depart="224" departLane="free" departSpeed="max">
+        <route edges="west_in north_out" />
+    </vehicle>
+    <vehicle id="car_39" type="car" depart="225" departLane="free" departSpeed="max">
+        <route edges="north_in east_out" />
+    </vehicle>
+    <vehicle id="car_40" type="car" depart="232" departLane="free" departSpeed="max">
+        <route edges="east_in north_out" />
+    </vehicle>
+    <vehicle id="car_41" type="car" depart="237" departLane="free" departSpeed="max">
+        <route edges="east_in west_out" />
+    </vehicle>
+    <vehicle id="car_42" type="car" depart="241" departLane="free" departSpeed="max">
+        <route edges="west_in north_out" />
+    </vehicle>
+    <vehicle id="car_43" type="car" depart="252" departLane="free" departSpeed="max">
+        <route edges="east_in south_out" />
+    </vehicle>
+    <vehicle id="car_44" type="car" depart="255" departLane="free" departSpeed="max">
+        <route edges="north_in west_out" />
+    </vehicle>
+    <vehicle id="car_45" type="car" depart="273" departLane="free" departSpeed="max">
+        <route edges="south_in east_out" />
+    </vehicle>
+    <vehicle id="car_46" type="car" depart="275" departLane="free" departSpeed="max">
+        <route edges="east_in west_out" />
+    </vehicle>
+    <vehicle id="car_47" type="car" depart="276" departLane="free" departSpeed="max">
+        <route edges="south_in east_out" />
+    </vehicle>
+    <vehicle id="car_48" type="car" depart="279" departLane="free" departSpeed="max">
+        <route edges="south_in north_out" />
+    </vehicle>
+    <vehicle id="car_49" type="car" depart="282" departLane="free" departSpeed="max">
+        <route edges="west_in north_out" />
+    </vehicle>
+    <vehicle id="car_50" type="car" depart="302" departLane="free" departSpeed="max">
+        <route edges="east_in south_out" />
+    </vehicle>
+    <vehicle id="car_51" type="car" depart="321" departLane="free" departSpeed="max">
+        <route edges="west_in north_out" />
+    </vehicle>
+    <vehicle id="car_52" type="car" depart="324" departLane="free" departSpeed="max">
+        <route edges="east_in south_out" />
+    </vehicle>
+    <vehicle id="car_53" type="car" depart="334" departLane="free" departSpeed="max">
+        <route edges="east_in west_out" />
+    </vehicle>
+    <vehicle id="car_54" type="car" depart="337" departLane="free" departSpeed="max">
+        <route edges="north_in east_out" />
+    </vehicle>
+    <vehicle id="car_55" type="car" depart="338" departLane="free" departSpeed="max">
+        <route edges="east_in west_out" />
+    </vehicle>
+    <vehicle id="car_56" type="car" depart="338" departLane="free" departSpeed="max">
+        <route edges="south_in north_out" />
+    </vehicle>
+    <vehicle id="car_57" type="car" depart="340" departLane="free" departSpeed="max">
+        <route edges="south_in west_out" />
+    </vehicle>
+    <vehicle id="car_58" type="car" depart="343" departLane="free" departSpeed="max">
+        <route edges="east_in south_out" />
+    </vehicle>
+    <vehicle id="car_59" type="car" depart="347" departLane="free" departSpeed="max">
+        <route edges="east_in west_out" />
+    </vehicle>
+    <vehicle id="car_60" type="car" depart="349" departLane="free" departSpeed="max">
+        <route edges="north_in west_out" />
+    </vehicle>
+    <vehicle id="car_61" type="car" depart="351" departLane="free" departSpeed="max">
+        <route edges="west_in east_out" />
+    </vehicle>
+    <vehicle id="car_62" type="car" depart="352" departLane="free" departSpeed="max">
+        <route edges="north_in south_out" />
+    </vehicle>
+    <vehicle id="car_63" type="car" depart="353" departLane="free" departSpeed="max">
+        <route edges="west_in south_out" />
+    </vehicle>
+    <vehicle id="car_64" type="car" depart="361" departLane="free" departSpeed="max">
+        <route edges="south_in west_out" />
+    </vehicle>
+    <vehicle id="car_65" type="car" depart="364" departLane="free" departSpeed="max">
+        <route edges="east_in north_out" />
+    </vehicle>
+    <vehicle id="car_66" type="car" depart="366" departLane="free" departSpeed="max">
+        <route edges="east_in west_out" />
+    </vehicle>
+    <vehicle id="car_67" type="car" depart="377" departLane="free" departSpeed="max">
+        <route edges="south_in east_out" />
+    </vehicle>
+    <vehicle id="car_68" type="car" depart="390" departLane="free" departSpeed="max">
+        <route edges="north_in south_out" />
+    </vehicle>
+    <vehicle id="car_69" type="car" depart="392" departLane="free" departSpeed="max">
+        <route edges="north_in west_out" />
+    </vehicle>
+    <vehicle id="car_70" type="car" depart="403" departLane="free" departSpeed="max">
+        <route edges="south_in west_out" />
+    </vehicle>
+    <vehicle id="car_71" type="car" depart="411" departLane="free" departSpeed="max">
+        <route edges="south_in north_out" />
+    </vehicle>
+    <vehicle id="car_72" type="car" depart="416" departLane="free" departSpeed="max">
+        <route edges="north_in east_out" />
+    </vehicle>
+    <vehicle id="car_73" type="car" depart="417" departLane="free" departSpeed="max">
+        <route edges="west_in north_out" />
+    </vehicle>
+    <vehicle id="car_74" type="car" depart="433" departLane="free" departSpeed="max">
+        <route edges="south_in east_out" />
+    </vehicle>
+    <vehicle id="car_75" type="car" depart="443" departLane="free" departSpeed="max">
+        <route edges="north_in south_out" />
+    </vehicle>
+    <vehicle id="car_76" type="car" depart="444" departLane="free" departSpeed="max">
+        <route edges="north_in east_out" />
+    </vehicle>
+    <vehicle id="car_77" type="car" depart="445" departLane="free" departSpeed="max">
+        <route edges="south_in west_out" />
+    </vehicle>
+    <vehicle id="car_78" type="car" depart="455" departLane="free" departSpeed="max">
+        <route edges="north_in west_out" />
+    </vehicle>
+    <vehicle id="car_79" type="car" depart="468" departLane="free" departSpeed="max">
+        <route edges="east_in south_out" />
+    </vehicle>
+    <vehicle id="car_80" type="car" depart="469" departLane="free" departSpeed="max">
+        <route edges="east_in south_out" />
+    </vehicle>
+    <vehicle id="car_81" type="car" depart="479" departLane="free" departSpeed="max">
+        <route edges="south_in east_out" />
+    </vehicle>
+    <vehicle id="car_82" type="car" depart="480" departLane="free" departSpeed="max">
+        <route edges="south_in north_out" />
+    </vehicle>
+    <vehicle id="car_83" type="car" depart="482" departLane="free" departSpeed="max">
+        <route edges="east_in south_out" />
+    </vehicle>
+    <vehicle id="car_84" type="car" depart="498" departLane="free" departSpeed="max">
+        <route edges="east_in west_out" />
+    </vehicle>
+    <vehicle id="car_85" type="car" depart="511" departLane="free" departSpeed="max">
+        <route edges="east_in west_out" />
+    </vehicle>
+    <vehicle id="car_86" type="car" depart="513" departLane="free" departSpeed="max">
+        <route edges="east_in north_out" />
+    </vehicle>
+    <vehicle id="car_87" type="car" depart="515" departLane="free" departSpeed="max">
+        <route edges="north_in west_out" />
+    </vehicle>
+    <vehicle id="car_88" type="car" depart="515" departLane="free" departSpeed="max">
+        <route edges="south_in east_out" />
+    </vehicle>
+    <vehicle id="car_89" type="car" depart="522" departLane="free" departSpeed="max">
+        <route edges="north_in east_out" />
+    </vehicle>
+    <vehicle id="car_90" type="car" depart="523" departLane="free" departSpeed="max">
+        <route edges="north_in south_out" />
+    </vehicle>
+    <vehicle id="car_91" type="car" depart="528" departLane="free" departSpeed="max">
+        <route edges="east_in west_out" />
+    </vehicle>
+    <vehicle id="car_92" type="car" depart="534" departLane="free" departSpeed="max">
+        <route edges="west_in north_out" />
+    </vehicle>
+    <vehicle id="car_93" type="car" depart="543" departLane="free" departSpeed="max">
+        <route edges="east_in south_out" />
+    </vehicle>
+    <vehicle id="car_94" type="car" depart="565" departLane="free" departSpeed="max">
+        <route edges="north_in west_out" />
+    </vehicle>
+    <vehicle id="car_95" type="car" depart="566" departLane="free" departSpeed="max">
+        <route edges="south_in west_out" />
+    </vehicle>
+    <vehicle id="car_96" type="car" depart="573" departLane="free" departSpeed="max">
+        <route edges="east_in north_out" />
+    </vehicle>
+    <vehicle id="car_97" type="car" depart="577" departLane="free" departSpeed="max">
+        <route edges="south_in east_out" />
+    </vehicle>
+    <vehicle id="car_98" type="car" depart="578" departLane="free" departSpeed="max">
+        <route edges="south_in north_out" />
+    </vehicle>
+    <vehicle id="car_99" type="car" depart="590" departLane="free" departSpeed="max">
+        <route edges="north_in south_out" />
+    </vehicle>
+    <vehicle id="car_100" type="car" depart="593" departLane="free" departSpeed="max">
+        <route edges="east_in west_out" />
+    </vehicle>
+    <vehicle id="car_101" type="car" depart="596" departLane="free" departSpeed="max">
+        <route edges="south_in east_out" />
+    </vehicle>
+    <vehicle id="car_102" type="car" depart="598" departLane="free" departSpeed="max">
+        <route edges="south_in west_out" />
+    </vehicle>
+    <vehicle id="ambulance_0" type="ambulance" depart="120" departLane="free" departSpeed="max">
+        <route edges="south_in north_out" />
+    </vehicle>
+</routes>
