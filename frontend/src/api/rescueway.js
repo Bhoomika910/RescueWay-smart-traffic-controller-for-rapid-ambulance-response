@@ -77,3 +77,23 @@ export const getLogSummary = () =>
 
 export const exportLogs = () =>
   API.post("/logs/export").then(r => r.data);
+
+// Admin JWT stays in memory; it is not persisted in browser storage.
+let adminToken = null;
+
+export const setAdminToken = (token) => {
+  adminToken = token;
+};
+
+API.interceptors.request.use((request) => {
+  if (adminToken) {
+    request.headers.Authorization = `Bearer ${adminToken}`;
+  }
+  return request;
+});
+
+export const loginAdmin = (username, password) =>
+  API.post("/auth/login", { username, password }).then(r => r.data);
+
+export const getAdminSession = () =>
+  API.get("/auth/me").then(r => r.data);

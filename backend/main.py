@@ -53,6 +53,12 @@ the traffic/ vs rl/ vs sumo/ entries below):
   arduino/     The physical firmware (traffic_controller.ino) — talked to
                over serial via services/serial_comm.py, not from here.
 """
+
+from slowapi import _rate_limit_exceeded_handler
+from slowapi.errors import RateLimitExceeded
+
+from rate_limit import limiter
+
 import asyncio
 import json
 from contextlib import asynccontextmanager
@@ -79,6 +85,7 @@ from routers.evaluation import router as evaluation_router
 from routers.logs import router as logs_router
 from routers.simulation import router as simulation_router
 from routers.zone import router as zone_router
+from routers.auth import router as auth_router
 from services.serial_comm import SerialBridge
 from services.traffic_controller import TrafficController
 
@@ -181,6 +188,12 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
+app.state.limiter = limiter
+app.add_exception_handler(
+    RateLimitExceeded,
+    _rate_limit_exceeded_handler,
+)
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=get_frontend_origins(),
@@ -194,6 +207,7 @@ app.include_router(evaluation_router)
 app.include_router(simulation_router)
 app.include_router(logs_router)
 app.include_router(data_router)
+app.include_router(auth_router)
 
 
 @app.websocket("/ws/live")

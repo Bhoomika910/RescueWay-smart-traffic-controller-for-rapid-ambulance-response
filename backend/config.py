@@ -4,6 +4,9 @@ RescueWay Configuration
 All settings in one place. No more hardcoded values.
 """
 import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # â”€â”€â”€ Arduino Hardware â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 ARDUINO_PORT = os.getenv("RESCUEWAY_ARDUINO_PORT", "COM3")
@@ -23,7 +26,7 @@ DEMO_MODE = (
 )
 
 DEMO_INTERVAL_MIN = int(os.getenv("RESCUEWAY_DEMO_INTERVAL_MIN", "60"))
-DEMO_INTERVAL_MAX = int(os.getenv("RESCUEWAY_DEMO_INTERVAL_MAX", "180"))
+DEMO_INTERVAL_MAX = int(os.getenv("RESCUEWAY_DEMO_INTERVAL_MAX", "120"))
 
 # â”€â”€â”€ Server â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 API_HOST = os.getenv("RESCUEWAY_HOST", "0.0.0.0")
@@ -112,7 +115,9 @@ LOG_BACKUP_COUNT = 3
 LOG_MEMORY_SIZE = 500
 
 # â”€â”€â”€ Database â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-DB_PATH = os.getenv("RESCUEWAY_DB_PATH", os.path.join(os.path.dirname(__file__), "data", "rescueway.db"))
+DB_PATH = os.getenv("RESCUEWAY_DB_PATH", "").strip() or os.path.join(
+    os.path.dirname(__file__), "data", "rescueway.db"
+)
 
 # â”€â”€â”€ Benchmark â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 BENCHMARK_MAX_EPISODES = 500
@@ -141,8 +146,39 @@ ENV_TAG_SUMO = "sumo"
 # and the noise.NoiseConfig module. See noise/noise_models.py
 # for the full list of RESCUEWAY_* environment variables.
 
+# ─── Administrator Authentication ─────────────────────
+
+ADMIN_USERNAME = os.getenv("RESCUEWAY_ADMIN_USERNAME", "").strip()
+ADMIN_PASSWORD_HASH = os.getenv("RESCUEWAY_ADMIN_PASSWORD_HASH", "")
+JWT_SECRET = os.getenv("RESCUEWAY_JWT_SECRET", "")
+JWT_ALGORITHM = "HS256"
+JWT_EXPIRE_MINUTES = int(
+    os.getenv("RESCUEWAY_JWT_EXPIRE_MINUTES", "30")
+)
+
+_admin_auth_values = [
+    ADMIN_USERNAME,
+    ADMIN_PASSWORD_HASH,
+    JWT_SECRET,
+]
+
+if any(_admin_auth_values) and not all(_admin_auth_values):
+    raise ValueError(
+        "Admin authentication requires username, password hash, "
+        "and JWT secret to be configured together."
+    )
+
+if JWT_EXPIRE_MINUTES < 5 or JWT_EXPIRE_MINUTES > 120:
+    raise ValueError("JWT expiry must be between 5 and 120 minutes.")
+
+ADMIN_AUTH_ENABLED = all(_admin_auth_values)
+
+
 
 def get_config_summary():
+
+
+
     """Return all config as dict for API endpoint."""
     return {
         "arduino": {

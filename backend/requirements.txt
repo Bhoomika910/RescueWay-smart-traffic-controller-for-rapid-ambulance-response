@@ -47,3 +47,9 @@ sumolib==1.27.1
 pytest==9.1.1
 httpx==0.28.1
 pytest-asyncio==1.4.0
+
+# Administrator authentication and login rate limiting
+PyJWT==2.10.1
+pwdlib[argon2]==0.3.0
+python-dotenv==1.2.2
+slowapi==0.1.9
