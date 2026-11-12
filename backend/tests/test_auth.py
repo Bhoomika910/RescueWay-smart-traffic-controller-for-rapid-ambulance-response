@@ -13,12 +13,14 @@ import config
 
 
 class TestAuthDisabledByDefault:
-    """Matches this suite's actual startup environment: no
-    RESCUEWAY_API_KEY is set, so auth must be a no-op — existing tests
-    and local dev must keep working unchanged."""
+    """The local-development bypass is allowed only when BOTH
+    API-key and administrator JWT authentication are disabled."""
 
-    def test_zone_select_works_without_any_header_when_auth_disabled(self, client):
-        assert config.AUTH_ENABLED is False  # sanity-check the test's own premise
+    def test_zone_select_works_without_any_header_when_both_auth_mechanisms_disabled(
+        self, client, monkeypatch
+    ):
+        assert config.AUTH_ENABLED is False
+        monkeypatch.setattr(config, "ADMIN_AUTH_ENABLED", False)
         resp = client.post("/zone/select", json={"zone": 1, "traffic": "medium"})
         assert resp.status_code == 200
 

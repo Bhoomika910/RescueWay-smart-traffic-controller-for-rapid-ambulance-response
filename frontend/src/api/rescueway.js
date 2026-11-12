@@ -77,3 +77,55 @@ export const getLogSummary = () =>
 
 export const exportLogs = () =>
   API.post("/logs/export").then(r => r.data);
+
+// Admin JWT stays in memory; it is not persisted in browser storage.
+let adminToken = null;
+
+export const setAdminToken = (token) => {
+  adminToken = token;
+};
+
+// Notify the application when an authenticated request returns 401.
+const notifyAdminSessionExpired = () => {
+  if (!adminToken) return;
+
+  adminToken = null;
+
+  if (typeof window !== "undefined") {
+    window.dispatchEvent(
+      new CustomEvent("admin-session-expired")
+    );
+  }
+};
+
+// Automatically clear an expired or invalid admin session.
+API.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    const requestUrl = error.config?.url || "";
+
+    // Do not treat failed login attempts as expired sessions.
+    if (
+      error.response?.status === 401 &&
+      adminToken &&
+      requestUrl !== "/auth/login"
+    ) {
+      notifyAdminSessionExpired();
+    }
+
+    return Promise.reject(error);
+  }
+);
+
+API.interceptors.request.use((request) => {
+  if (adminToken) {
+    request.headers.Authorization = `Bearer ${adminToken}`;
+  }
+  return request;
+});
+
+export const loginAdmin = (username, password) =>
+  API.post("/auth/login", { username, password }).then(r => r.data);
+
+export const getAdminSession = () =>
+  API.get("/auth/me").then(r => r.data);

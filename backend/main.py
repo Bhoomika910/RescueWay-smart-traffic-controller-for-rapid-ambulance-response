@@ -53,6 +53,12 @@ the traffic/ vs rl/ vs sumo/ entries below):
   arduino/     The physical firmware (traffic_controller.ino) — talked to
                over serial via services/serial_comm.py, not from here.
 """
+
+from slowapi import _rate_limit_exceeded_handler
+from slowapi.errors import RateLimitExceeded
+
+from rate_limit import limiter
+
 import asyncio
 import json
 from contextlib import asynccontextmanager
@@ -79,6 +85,7 @@ from routers.evaluation import router as evaluation_router
 from routers.logs import router as logs_router
 from routers.simulation import router as simulation_router
 from routers.zone import router as zone_router
+from routers.auth import router as auth_router
 from services.serial_comm import SerialBridge
 from services.traffic_controller import TrafficController
 
@@ -128,7 +135,10 @@ async def lifespan(app: FastAPI):
     # Startup
     try:
         serial_bridge.connect()
-        print("Arduino connected successfully")
+        if serial_bridge.simulation_mode:
+            print("Arduino unavailable or hardware disabled. Running in simulation mode.")
+        else:
+            print("Arduino connected successfully")
     except Exception as e:
         print(f"Arduino not connected: {e}")
         print("Running in simulation mode")
@@ -136,13 +146,15 @@ async def lifespan(app: FastAPI):
     rl_agent.load()
     print(f"DQN agent ready | epsilon={rl_agent.epsilon} | inference_mode=True")
 
-    if not config.AUTH_ENABLED:
+    if not config.AUTH_ENABLED and not config.ADMIN_AUTH_ENABLED:
         print(
-            "WARNING: RESCUEWAY_API_KEY is not set — state-mutating routes "
-            "(/zone/select, /zone/clear, /compare/run, /eval/benchmark, "
-            "/eval/stress-test, /logs/export, /simulation/*) are UNAUTHENTICATED. "
-            "This is fine for local development; set RESCUEWAY_API_KEY before "
-            "exposing this server beyond localhost. See .env.example."
+            "WARNING: Both API-key and administrator JWT authentication "
+            "are disabled. State-mutating routes are unauthenticated."
+        )
+    elif not config.AUTH_ENABLED and config.ADMIN_AUTH_ENABLED:
+        print(
+            "INFO: API-key authentication is disabled. "
+            "State-mutating routes require a valid administrator JWT."
         )
 
     # Give traffic controller access to serial, broadcast, and RL
@@ -181,6 +193,12 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
+app.state.limiter = limiter
+app.add_exception_handler(
+    RateLimitExceeded,
+    _rate_limit_exceeded_handler,
+)
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=get_frontend_origins(),
@@ -194,6 +212,7 @@ app.include_router(evaluation_router)
 app.include_router(simulation_router)
 app.include_router(logs_router)
 app.include_router(data_router)
+app.include_router(auth_router)
 
 
 @app.websocket("/ws/live")
