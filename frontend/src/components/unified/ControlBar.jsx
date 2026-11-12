@@ -16,7 +16,13 @@ const PATTERNS = [
  * @param {LiveEvent} props.lastEvent - Most recent live event pushed over the WebSocket.
  * @param {boolean} props.connected - Whether the live WebSocket is currently connected.
  */
-export default function ControlBar({ lastEvent, connected }) {
+export default function ControlBar({
+  lastEvent,
+  connected,
+  readOnly = false,
+  showGpsSimulator = true,
+  showBenchmark = true,
+}) {
   // Derived directly from lastEvent.traffic (same source App.jsx's footer reads)
   // rather than local state, so it can never silently drift from the live signal
   // if the pattern changes from a source other than this component's own button.
@@ -30,9 +36,16 @@ export default function ControlBar({ lastEvent, connected }) {
 
   const mode = lastEvent?.mode || "normal";
 
-  const flash = (msg) => { setFeedback(msg); setTimeout(()=>setFeedback(""),2500); };
+  const flash = (msg) => { setFeedback(msg); setTimeout(()=>setFeedback(""),4000); };
+
+  const denyControl = () => {
+    if (!readOnly) return false;
+    flash("Administrator access required. Please log in to control RescueWay.");
+    return true;
+  };
 
   const handleGPS = async (zone) => {
+    if (denyControl()) return;
     setLoading(zone);
     try { await selectZone(zone, activePattern); flash(`GPS → Zone ${zone}`); }
     catch(e) { console.error(e); }
@@ -40,11 +53,13 @@ export default function ControlBar({ lastEvent, connected }) {
   };
 
   const handlePattern = async (p) => {
+    if (denyControl()) return;
     try { await setTrafficPattern(p); flash(`Pattern → ${p}`); }
     catch(e) { console.error(e); }
   };
 
   const handleRates = async () => {
+    if (denyControl()) return;
     try {
       const validated = {
         z1: Math.max(0, Math.min(4, rates.z1 || 0)),
@@ -64,11 +79,13 @@ export default function ControlBar({ lastEvent, connected }) {
   };
 
   const handleTimings = async () => {
+    if (denyControl()) return;
     try { await setTimings(green, yellow, emDur); flash("Timings applied"); }
     catch(e) { console.error(e); }
   };
 
   const handleReset = async () => {
+    if (denyControl()) return;
     try { await resetSimulation(); flash("Simulation reset"); }
     catch(e) { console.error(e); }
   };
@@ -78,12 +95,18 @@ export default function ControlBar({ lastEvent, connected }) {
       mode==="emergency"?"bg-red-950/30 border-red-800":"bg-[#1e2130] border-[#2a2d3a]"
     }`}>
       {feedback && (
-        <div className="mb-3 px-3 py-1.5 bg-blue-900/40 text-blue-300 text-xs rounded-lg text-center border border-blue-800/50">
+        <div className={`mb-3 px-3 py-2 text-xs rounded-lg text-center border ${
+          feedback.startsWith("Administrator access required")
+            ? "bg-amber-900/30 text-amber-300 border-amber-700/50"
+            : "bg-blue-900/40 text-blue-300 border-blue-800/50"
+        }`}>
           {feedback}
         </div>
       )}
 
-      <div className="grid grid-cols-1 lg:grid-cols-5 gap-4">
+      <div className={`grid grid-cols-1 ${
+        showGpsSimulator ? "lg:grid-cols-5" : "lg:grid-cols-3"
+      } gap-4`}>
 
         {/* 1: Simulation Controls */}
         <div className="space-y-2.5">
@@ -106,6 +129,8 @@ export default function ControlBar({ lastEvent, connected }) {
                   <label className="text-[8px] text-[#6b7080]">Z{z}</label>
                   <input type="number" min="0" max="4" step="0.1"
                     value={rates[`z${z}`]}
+                    readOnly={readOnly}
+                    onClick={denyControl}
                     onChange={e=>setRates({...rates,[`z${z}`]:parseFloat(e.target.value)||0})}
                     className="w-full bg-[#141620] border border-[#2a2d3a] rounded px-1.5 py-0.5 text-[10px] text-white"/>
                 </div>
@@ -118,6 +143,8 @@ export default function ControlBar({ lastEvent, connected }) {
           </div>
         </div>
 
+        {showGpsSimulator && (
+          <>
         {/* 2: GPS Simulator */}
         <div className="space-y-2.5">
           <p className="text-[9px] uppercase tracking-wider text-[#6b7080] font-semibold">GPS Simulator</p>
@@ -223,6 +250,9 @@ export default function ControlBar({ lastEvent, connected }) {
 
        
 
+          </>
+        )}
+
         {/* 4: Signal Timings */}
         <div className="space-y-2.5">
           <p className="text-[9px] uppercase tracking-wider text-[#6b7080] font-semibold">Signal Timings</p>
@@ -235,6 +265,8 @@ export default function ControlBar({ lastEvent, connected }) {
               <div key={l}>
                 <label className="text-[9px] text-[#6b7080]">{l}</label>
                 <input type="number" min={min} max={max} value={v}
+                  readOnly={readOnly}
+                  onClick={denyControl}
                   onChange={e=>s(Number(e.target.value))}
                   className="w-full bg-[#141620] border border-[#2a2d3a] rounded px-2 py-1 text-xs text-white"/>
               </div>
@@ -254,10 +286,17 @@ export default function ControlBar({ lastEvent, connected }) {
               className="w-full px-2 py-1.5 text-[10px] border border-red-800 text-red-400 rounded-lg hover:bg-red-900/30 font-medium">
               Reset Simulation
             </button>
-            <button onClick={()=>window.dispatchEvent(new CustomEvent("navigate",{detail:"comparison"}))}
-              className="w-full px-2 py-1.5 text-[10px] border border-[#2a2d3a] text-[#9ca0b0] rounded-lg hover:bg-[#252838] font-medium">
-              Run Benchmark
-            </button>
+            {showBenchmark && (
+              <button
+                onClick={() => {
+                  if (denyControl()) return;
+                  window.dispatchEvent(new CustomEvent("navigate", { detail: "comparison" }));
+                }}
+                className="w-full px-2 py-1.5 text-[10px] border border-[#2a2d3a] text-[#9ca0b0] rounded-lg hover:bg-[#252838] font-medium"
+              >
+                Run Benchmark
+              </button>
+            )}
           </div>
           <div className="bg-[#141620] rounded-lg p-2 border border-[#2a2d3a] space-y-1">
             <p className="text-[9px] text-[#6b7080]">System</p>

@@ -16,6 +16,30 @@ describe("ControlBar", () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
+  it("blocks public visitors from changing traffic patterns", async () => {
+    const user = userEvent.setup();
+
+    render(
+      <ControlBar
+        lastEvent={{ mode: "normal", traffic: "medium" }}
+        connected={true}
+        readOnly={true}
+      />
+    );
+
+    await user.click(screen.getByRole("button", { name: "Low" }));
+
+    await waitFor(() => {
+      expect(
+        screen.getByText(
+          "Administrator access required. Please log in to control RescueWay."
+        )
+      ).toBeInTheDocument();
+    });
+
+    expect(api.setTrafficPattern).not.toHaveBeenCalled();
+  });
+
 
   it("calls setTrafficPattern with the clicked pattern's id", async () => {
     const user = userEvent.setup();

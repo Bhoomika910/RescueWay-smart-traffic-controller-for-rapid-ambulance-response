@@ -1,5 +1,6 @@
 
 import { useEffect, useState } from "react";
+import ControlBar from "../unified/ControlBar";
 import {
   getHealth,
   getSimulationStatus,
@@ -7,7 +8,7 @@ import {
   setAdminToken,
 } from "../../api/rescueway";
 
-export default function AdminDashboard({ username, onLogout }) {
+export default function AdminDashboard({ username, onLogout, lastEvent, connected }) {
   const [health, setHealth] = useState(null);
   const [simulation, setSimulation] = useState(null);
   const [zones, setZones] = useState(null);
@@ -73,6 +74,22 @@ export default function AdminDashboard({ username, onLogout }) {
       </header>
 
       <main className="mx-auto mt-8 max-w-6xl space-y-7">
+        <section className="space-y-3">
+          <div>
+            <h2 className="text-lg font-semibold text-white">Operator controls</h2>
+            <p className="text-sm text-[#9ca0b0]">
+              Administrator-only controls for the shared cloud simulation
+            </p>
+          </div>
+          <ControlBar
+            lastEvent={lastEvent}
+            connected={connected}
+            readOnly={false}
+            showGpsSimulator={true}
+            showBenchmark={false}
+          />
+        </section>
+
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
             <h2 className="text-lg font-semibold text-white">System overview</h2>
@@ -101,6 +118,8 @@ export default function AdminDashboard({ username, onLogout }) {
           <Stat label="Simulation mode" value={simulation?.mode} />
           <Stat label="Traffic pattern" value={simulation?.traffic_pattern} />
         </section>
+
+
 
         <section className="rounded-xl border border-[#2a2d3a] bg-[#1a1d27] p-5">
           <h2 className="mb-4 text-lg font-semibold text-white">

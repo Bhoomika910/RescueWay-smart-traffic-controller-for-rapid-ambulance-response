@@ -111,6 +111,8 @@ export default function App() {
       <AdminDashboard
         username={adminUsername}
         onLogout={handleLogout}
+        lastEvent={lastEvent}
+        connected={connected}
       />
     );
   }
@@ -162,13 +164,12 @@ export default function App() {
                 </div>
               </div>
 
-              {/* Public visitors cannot access operator controls. */}
-              {!isPublicDemo && (
-                <ControlBar
-                  lastEvent={lastEvent}
-                  connected={connected}
-                />
-              )}
+              {/* Public visitors can see controls but cannot operate them. */}
+              <ControlBar
+                lastEvent={lastEvent}
+                connected={connected}
+                readOnly={isPublicDemo}
+              />
             </div>
           </ErrorBoundary>
         )}

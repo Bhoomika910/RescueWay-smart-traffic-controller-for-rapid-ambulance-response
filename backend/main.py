@@ -135,7 +135,10 @@ async def lifespan(app: FastAPI):
     # Startup
     try:
         serial_bridge.connect()
-        print("Arduino connected successfully")
+        if serial_bridge.simulation_mode:
+            print("Arduino unavailable or hardware disabled. Running in simulation mode.")
+        else:
+            print("Arduino connected successfully")
     except Exception as e:
         print(f"Arduino not connected: {e}")
         print("Running in simulation mode")
@@ -143,13 +146,15 @@ async def lifespan(app: FastAPI):
     rl_agent.load()
     print(f"DQN agent ready | epsilon={rl_agent.epsilon} | inference_mode=True")
 
-    if not config.AUTH_ENABLED:
+    if not config.AUTH_ENABLED and not config.ADMIN_AUTH_ENABLED:
         print(
-            "WARNING: RESCUEWAY_API_KEY is not set — state-mutating routes "
-            "(/zone/select, /zone/clear, /compare/run, /eval/benchmark, "
-            "/eval/stress-test, /logs/export, /simulation/*) are UNAUTHENTICATED. "
-            "This is fine for local development; set RESCUEWAY_API_KEY before "
-            "exposing this server beyond localhost. See .env.example."
+            "WARNING: Both API-key and administrator JWT authentication "
+            "are disabled. State-mutating routes are unauthenticated."
+        )
+    elif not config.AUTH_ENABLED and config.ADMIN_AUTH_ENABLED:
+        print(
+            "INFO: API-key authentication is disabled. "
+            "State-mutating routes require a valid administrator JWT."
         )
 
     # Give traffic controller access to serial, broadcast, and RL
