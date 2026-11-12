@@ -40,6 +40,7 @@ export default function App() {
     setRoute(path);
   };
 
+
   useEffect(() => {
     const handlePopState = () => {
       setRoute(window.location.pathname);
@@ -49,17 +50,30 @@ export default function App() {
       setPage(event.detail);
     };
 
+    const handleAdminSessionExpired = () => {
+      setIsAdmin(false);
+      setAdminUsername("");
+      navigateTo("/admin/login", true);
+    };
+
     window.addEventListener("popstate", handlePopState);
     window.addEventListener("navigate", handleDashboardNavigation);
+    window.addEventListener(
+      "admin-session-expired",
+      handleAdminSessionExpired
+    );
 
     return () => {
       window.removeEventListener("popstate", handlePopState);
       window.removeEventListener("navigate", handleDashboardNavigation);
+      window.removeEventListener(
+        "admin-session-expired",
+        handleAdminSessionExpired
+      );
     };
   }, []);
 
-  // Admin authentication is intentionally memory-only.
-  // A page refresh requires the administrator to log in again.
+  // Require authentication when opening the admin dashboard directly.
   useEffect(() => {
     if (route === "/admin" && !isAdmin) {
       navigateTo("/admin/login", true);

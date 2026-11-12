@@ -60,12 +60,16 @@ export default function AdminDashboard({ username, onLogout }) {
           </p>
         </div>
 
+
+
+
         <button
           onClick={logout}
           className="rounded-lg border border-[#343849] px-4 py-2 text-sm text-red-300 hover:bg-red-500/10"
         >
           Sign out
         </button>
+
       </header>
 
       <main className="mx-auto mt-8 max-w-6xl space-y-7">
